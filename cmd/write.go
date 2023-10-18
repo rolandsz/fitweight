@@ -2,19 +2,17 @@ package cmd
 
 import (
 	"os"
-	"syscall"
 
-	"github.com/davidkroell/bodycomposition"
-	"golang.org/x/crypto/ssh/terminal"
+	"github.com/rolandsz/fitweight"
 
 	"github.com/spf13/cobra"
 )
 
-// uploadCmd represents the upload command
-var uploadCmd = &cobra.Command{
-	Use:     "upload",
-	Short:   "Upload your body composition values to Garmin Connect",
-	Aliases: []string{"u", "add"},
+// writeCmd represents the write command
+var writeCmd = &cobra.Command{
+	Use:     "write",
+	Short:   "Writes the specified weight measurement to a .fit file",
+	Aliases: []string{"w"},
 	Run: func(cmd *cobra.Command, args []string) {
 		flags := cmd.Flags()
 		weight, _ := flags.GetFloat64("weight")
@@ -36,62 +34,54 @@ var uploadCmd = &cobra.Command{
 		calories, _ := flags.GetFloat64("calories")
 		bmi, _ := flags.GetFloat64("bmi")
 
-		var boneMass float64
-		var muscleMass float64
+		var boneMass float64 = 0.0
+		var muscleMass float64 = 0.0
 
-		if bone != -1 && boneKg != -1 {
+		if bone > -1 && boneKg > -1 {
 			cmd.PrintErrf("Cannot provide bone weight in percent and bone mass in kg! Use either of both!")
 			os.Exit(1)
 		}
 
-		if bone != -1 {
+		if bone > -1 {
 			boneMass = weight * bone / 100
-		} else {
+		} else if boneKg > -1 {
 			boneMass = boneKg
 		}
 
-		if muscle != -1 && muscleKg != -1 {
+		if muscle > -1 && muscleKg > -1 {
 			cmd.PrintErrf("Cannot provide muscle weight in percent and muscle mass in kg! Use either of both!")
 			os.Exit(1)
 		}
 
-		if muscle != -1 {
+		if muscle > -1 {
 			muscleMass = weight * muscle / 100
-		} else {
+		} else if muscleKg > -1 {
 			muscleMass = muscleKg
 		}
 
-		bc := bodycomposition.NewBodyComposition(weight, fat, hydration, boneMass, muscleMass, visceralFat, physiqueRating, metabolicAge, calories, bmi, ts)
+		wm := fitweight.NewWeightMeasurement(weight, fat, hydration, boneMass, muscleMass, visceralFat, physiqueRating, metabolicAge, calories, bmi, ts)
 
-		email, _ := cmd.Flags().GetString("email")
-		password, _ := cmd.Flags().GetString("password")
-		if password == "" {
-			cmd.Print("Password for ", email, ": ")
-			bytePasswd, err := terminal.ReadPassword(int(syscall.Stdin))
-			if err != nil {
-				cmd.PrintErr("Password input failed\n")
-			}
-			password = string(bytePasswd)
-		}
+		output, _ := cmd.Flags().GetString("output")
 
-		cmd.Println("... uploading weight")
+		cmd.Println("... writing weight measurement to:", output)
 
-		if err := bodycomposition.Upload(email, password, bc); err != nil {
-			cmd.PrintErrf("Error uploading weight to Garmin Connect: %s\n", err.Error())
+		if err := fitweight.WriteToDisk(output, wm); err != nil {
+			cmd.PrintErrf("Error writing weight measurement to the disk: %s\n", err.Error())
 			os.Exit(1)
 		}
+
+		cmd.Println("Done!")
 
 		os.Exit(0)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(uploadCmd)
+	rootCmd.AddCommand(writeCmd)
 
-	flags := uploadCmd.Flags()
+	flags := writeCmd.Flags()
 
-	flags.StringP("email", "e", "", "Email of the Garmin account")
-	flags.StringP("password", "p", "", "Password of the Garmin account")
+	flags.StringP("output", "o", "default.fit", "Path to the output .fit file")
 
 	flags.Float64P("weight", "w", -1, "Set your weight in kilograms")
 	flags.Float64P("fat", "f", 0, "Set your fat in percent")

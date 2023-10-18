@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/davidkroell/bodycomposition/cmd"
+	"github.com/rolandsz/fitweight/cmd"
 )
 
 func main() {

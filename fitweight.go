@@ -1,4 +1,4 @@
-package bodycomposition
+package fitweight
 
 import (
 	"encoding/binary"
@@ -8,8 +8,8 @@ import (
 	"github.com/tormoder/fit"
 )
 
-// BodyComposition is the data container struct for managing the body measurements
-type BodyComposition struct {
+// WeightMeasurement is the data container struct for managing the weight measurements
+type WeightMeasurement struct {
 	TimeStamp         time.Time
 	Weight            float64
 	PercentFat        float64
@@ -23,11 +23,12 @@ type BodyComposition struct {
 	BodyMassIndex     float64
 }
 
-func (bc BodyComposition) writeFitFile(writer io.Writer) error {
+func (wm WeightMeasurement) writeFitFile(writer io.Writer) error {
 	fitfile, err := fit.NewFile(fit.FileTypeWeight, fit.NewHeader(fit.V20, true))
 	if err != nil {
 		return err
 	}
+	fitfile.FileId.TimeCreated = wm.TimeStamp
 
 	weight, err := fitfile.Weight()
 	if err != nil {
@@ -36,31 +37,31 @@ func (bc BodyComposition) writeFitFile(writer io.Writer) error {
 
 	weight.WeightScales = []*fit.WeightScaleMsg{
 		{
-			Timestamp:         bc.TimeStamp,
-			Weight:            fit.Weight(bc.Weight * 100),
-			PercentFat:        uint16(bc.PercentFat * 100),
-			PercentHydration:  uint16(bc.PercentHydration * 100),
-			BoneMass:          uint16(bc.BoneMass * 100),
-			MuscleMass:        uint16(bc.MuscleMass * 100),
-			VisceralFatRating: uint8(bc.VisceralFatRating),
-			PhysiqueRating:    uint8(bc.PhysiqueRating),
-			MetabolicAge:      uint8(bc.MetabolicAge),
-			ActiveMet:         uint16(bc.CaloriesActiveMet),
-			Bmi:               uint16(bc.BodyMassIndex * 10),
+			Timestamp:         wm.TimeStamp,
+			Weight:            fit.Weight(wm.Weight * 100),
+			PercentFat:        uint16(wm.PercentFat * 100),
+			PercentHydration:  uint16(wm.PercentHydration * 100),
+			BoneMass:          uint16(wm.BoneMass * 100),
+			MuscleMass:        uint16(wm.MuscleMass * 100),
+			VisceralFatRating: uint8(wm.VisceralFatRating),
+			PhysiqueRating:    uint8(wm.PhysiqueRating),
+			MetabolicAge:      uint8(wm.MetabolicAge),
+			ActiveMet:         uint16(wm.CaloriesActiveMet),
+			Bmi:               uint16(wm.BodyMassIndex * 10),
 		},
 	}
 
 	return fit.Encode(writer, fitfile, binary.BigEndian)
 }
 
-// NewBodyComposition creates a new BodyComposition instance
-func NewBodyComposition(weight, percentFat, percentHydration, boneMass, muscleMass, visceralFatRating, physiqueRating, metabolicAge, caloriesActiveMet, bmi float64, timestamp int64) BodyComposition {
+// NewWeightMeasurement creates a new WeightMeasurement instance
+func NewWeightMeasurement(weight, percentFat, percentHydration, boneMass, muscleMass, visceralFatRating, physiqueRating, metabolicAge, caloriesActiveMet, bmi float64, timestamp int64) WeightMeasurement {
 	ts := time.Now()
 	if timestamp != -1 {
 		ts = time.Unix(timestamp, 0)
 	}
 
-	return BodyComposition{
+	return WeightMeasurement{
 		TimeStamp:         ts,
 		Weight:            weight,
 		PercentFat:        percentFat,

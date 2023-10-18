@@ -1,80 +1,77 @@
 <p align="center">
 
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/davidkroell/bodycomposition/build.yml?branch=master)](https://github.com/davidkroell/bodycomposition/actions/workflows/build.yml)
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/davidkroell/bodycomposition)](https://github.com/davidkroell/bodycomposition/releases/latest)
-[![GitHub go.mod Go version (subdirectory of monorepo)](https://img.shields.io/github/go-mod/go-version/davidkroell/bodycomposition)](https://github.com/davidkroell/bodycomposition/blob/master/go.mod)
-[![Go Report Card](https://goreportcard.com/badge/github.com/davidkroell/bodycomposition)](https://goreportcard.com/report/github.com/davidkroell/bodycomposition)
-[![Go Reference](https://pkg.go.dev/badge/github.com/davidkroell/bodycomposition.svg)](https://pkg.go.dev/github.com/davidkroell/bodycomposition)
-[![GitHub all releases](https://img.shields.io/github/downloads/davidkroell/bodycomposition/total?color=orange)](https://github.com/davidkroell/bodycomposition/releases)
-[![GitHub license](https://img.shields.io/github/license/davidkroell/bodycomposition)](https://github.com/davidkroell/bodycomposition/blob/master/LICENSE)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/rolandsz/fitweight/build.yml?branch=master)](https://github.com/rolandsz/fitweight/actions/workflows/build.yml)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/rolandsz/fitweight)](https://github.com/rolandsz/fitweight/releases/latest)
+[![GitHub go.mod Go version (subdirectory of monorepo)](https://img.shields.io/github/go-mod/go-version/rolandsz/fitweight)](https://github.com/rolandsz/fitweight/blob/master/go.mod)
+[![Go Report Card](https://goreportcard.com/badge/github.com/rolandsz/fitweight)](https://goreportcard.com/report/github.com/rolandsz/fitweight)
+[![Go Reference](https://pkg.go.dev/badge/github.com/rolandsz/fitweight.svg)](https://pkg.go.dev/github.com/rolandsz/fitweight)
+[![GitHub all releases](https://img.shields.io/github/downloads/rolandsz/fitweight/total?color=orange)](https://github.com/rolandsz/fitweight/releases)
+[![GitHub license](https://img.shields.io/github/license/rolandsz/fitweight)](https://github.com/rolandsz/fitweight/blob/master/LICENSE)
 
 </p>
 
-# bodycompostion
-Bodycomposition is a program to manage your body measurements and composition stored in
-Garmin Connect Cloud (https://connect.garmin.com) from your beloved commandline.
+# fitweight
+Fitweight is a program to write weight measurements to .fit files based.
 
-For now, you can just add body composition values. Any other thing should be done in Garmin Connect.
 
+## Acknowledgement
+This program is based on [bodycomposition](https://github.com/davidkroell/bodycomposition).
 
 ## Download
-Releases can be found in [release](https://github.com/davidkroell/bodycomposition/releases) tab.
+Releases can be found in [release](https://github.com/rolandsz/fitweight/releases) tab.
 
 
 ## Usage
 
-Uploading weight to Garmin connect. If you do not provide a password (`--password`), it will be prompted from stdin.
+Creating a .fit file containing a weight measurement which can be uploaded to Garmin connect.
 ```bash
-$ ./bodycomposition upload --weight 80 --bone 14 --fat 13 --hydration 58 --muscle 42 --email john.doe@mail.com
+$ ./fitweight create --weight 80 --bone 14 --fat 13 --hydration 58 --muscle 42 --output monday.fit
 ```
 
 General usage
 ```bash
-$ ./bodycomposition -h
-Bodycomposition is a program to manage your body measurements and composition stored in
-Garmin Connect Cloud (https://connect.garmin.com) from your beloved commandline.
+$ ./fitweight -h
+Fitweight is a program to write weight measurements to .fit files.
 
-For now, you can just add body composition values. Any other thing should be done in Garmin Connect.
-Version v2.0.0
+Version v1.0.0
 
 Usage:
-  bodycomposition [command]
+  fitweight [command]
 
 Available Commands:
   help        Help about any command
-  upload      Upload your body composition values to Garmin Connect
+  write       Writes the specified weight measurement to a .fit file
 
 Flags:
-  -h, --help   help for bodycomposition
+  -h, --help   help for fitweight
 
-Use "bodycomposition [command] --help" for more information about a command.
+Use "fitweight [command] --help" for more information about a command.
 ```
 
-#### Upload command usage
+#### Write command usage
 
 ```bash
-$ ./bodycomposition upload -h
-Upload your body composition values to Garmin Connect
+$ ./fitweight write -h
+Writes the specified weight measurement to a .fit file
 
 Usage:
-  bodycomposition upload [flags]
+  fitweight write [flags]
 
 Aliases:
-  upload, u, add
+  write, w
 
 Flags:
       --bmi float               Set your BMI - body mass index
-  -b, --bone float              Set your bone mass in percent
-      --bone-mass float         Set your bone mass in kilograms (use --bone or --bone-mass)
+  -b, --bone float              Set your bone mass in percent (default -1)
+      --bone-mass float         Set your bone mass in kilograms (default -1)
   -c, --calories float          Set your caloric intake
-  -e, --email string            Email of the Garmin account
   -f, --fat float               Set your fat in percent
-  -h, --help                    help for upload
+  -h, --help                    help for write
       --hydration float         Set your hydration in percent
       --metabolic-age float     Set your metabolic age
-  -m, --muscle float            Set your muscle mass in percent
-      --muscle-mass float       Set your muscle mass in kilograms (use -muscle or --muscle-mass)
-  -p, --password string         Password of the Garmin account
+  -m, --muscle float            Set your muscle mass in percent (default -1)
+      --muscle-mass float       Set your muscle mass in kilograms (default -1)
+  -o, --output string           Path to the output .fit file (default "default.fit")
       --physique-rating float   Set your physique rating (valid values: 1-9)
   -t, --unix-timestamp int      Set the timestamp of the measurement (default -1)
       --visceral-fat float      Set your visceral fat rating (valid values: 1-60)

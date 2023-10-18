@@ -7,15 +7,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var version = "v1.7.0"
+var version = "v1.0.0"
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use: "bodycomposition",
-	Long: `Bodycomposition is a program to manage your body measurements and composition stored in
-Garmin Connect Cloud (https://connect.garmin.com) from your beloved commandline.
+	Use: "fitweight",
+	Long: `Fitweight is a program to write weight measurements to .fit files.
 
-For now, you can just add body composition values. Any other thing should be done in Garmin Connect.
 Version ` + version,
 }
 
